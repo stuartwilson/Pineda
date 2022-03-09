@@ -8,9 +8,6 @@
 	"T"		: 100000,
 	"weightMin" 	: -1.0,
 	"weightMax" 	: 1.0,
-	"pre"		: [0,0,1,1,2,3,4,4,4],
-	"post"		: [2,3,2,3,3,2,2,3,4],
-	"inputNodes" 	: [0,1],
-	"outputNodes" 	: [3],
-	"mapFileName" 	: "XORmap.h5"
+	"mapFile" 	: "XORmap.h5",
+	"netFile" 	: "XORnet.h5"
 }

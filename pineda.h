@@ -1,3 +1,4 @@
+
 morph::RandUniform<double, std::mt19937>* rng;
 
 class Network{

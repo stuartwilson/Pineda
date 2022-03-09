@@ -1,7 +1,7 @@
-#include "pineda.h"
-
 #include <morph/HdfData.h>
 #include <morph/Config.h>
+
+#include "pineda.h"
 
 int main(int argc, char **argv){
 
@@ -37,8 +37,15 @@ int main(int argc, char **argv){
         int errorSamplePeriod = conf.getInt("errorSamplePeriod",1000);
 
         int T = conf.getInt("T",100000);
-        const Json::Value pre = conf.getArray("pre");
-        const Json::Value post = conf.getArray("post");
+
+
+        std::string netFileName = conf.getString("netFile", "unknown net");
+        std::vector<int> pre, post, inID, ouID;
+        morph::HdfData net(netFileName,1);
+        net.read_contained_vals ("pre", pre);
+        net.read_contained_vals ("post", post);
+        net.read_contained_vals ("inputNodes", inID);
+        net.read_contained_vals ("outputNodes", ouID);
 
         if(pre.size()!=post.size()){
             std::cout<<"Pre and Post vectors different sizes"<<std::endl;
@@ -48,29 +55,12 @@ int main(int argc, char **argv){
         // determine number of network nodes
         int N = -1;
         for(int i=0;i<pre.size();i++){
-            if(pre[i].asInt()>N){
-                N = pre[i].asInt();
-            }
-            if(post[i].asInt()>N){
-                N = post[i].asInt();
-            }
-        }
-        N++;
-
-        // identify input and output nodes
-        std::vector<int> inID(0);
-        const Json::Value I = conf.getArray ("inputNodes");
-        for (int i=0; i<I.size(); i++) {
-            inID.push_back(I[i].asInt());
-        }
-        std::vector<int> ouID(0);
-        const Json::Value O = conf.getArray ("outputNodes");
-        for (int i=0; i<O.size(); i++) {
-            ouID.push_back(O[i].asInt());
-        }
+            if(pre[i]>N){ N = pre[i]; }
+            if(post[i]>N){ N = post[i]; }
+        } N++;
 
         // read in map information
-        std::string mapFileName = conf.getString("mapFileName", "unknown map");
+        std::string mapFileName = conf.getString("mapFile", "unknown map");
         std::vector<double> In, Out;
         morph::HdfData map(mapFileName,1);
         map.read_contained_vals ("In", In);
@@ -82,7 +72,6 @@ int main(int argc, char **argv){
             return 0;
         }
         std::vector<std::vector<double> > inVals(nPoint,std::vector<double>(inID.size(),0.0));
-        std::vector<std::vector<double> > ouVals(nPoint,std::vector<double>(ouID.size(),0.0));
         {
             int k=0;
             for(int i=0;i<nPoint;i++){
@@ -92,6 +81,7 @@ int main(int argc, char **argv){
                 }
             }
         }
+        std::vector<std::vector<double> > ouVals(nPoint,std::vector<double>(ouID.size(),0.0));
         {
             int k=0;
             for(int i=0;i<nPoint;i++){
@@ -109,10 +99,8 @@ int main(int argc, char **argv){
         P.setInputID(inID);
         P.setOutputID(ouID);
 
-
-        for(int i=0;i<pre.size();i++){
-            P.connect(pre[i].asInt(),post[i].asInt());
-        }
+        // Add network connections
+        for(int i=0;i<pre.size();i++){ P.connect(pre[i],post[i]); }
 
         // Finalize network
         P.postConnect();
