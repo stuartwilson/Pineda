@@ -21,4 +21,4 @@ First create a .h5 file containing an input/output map. Running setXORmap.py cre
 Then run
 ```
 ./build/model config.json logs 0
-'''
+```
