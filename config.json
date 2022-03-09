@@ -1,0 +1,16 @@
+{
+	"dt"		: 1.0,
+	"tauX"		: 1.0,
+	"tauY"		: 1.0,
+	"tauW"		: 32.0,
+	"divThresh"	: 0.000001,
+	"maxSteps" 	: 400,
+	"T"		: 100000,
+	"weightMin" 	: -1.0,
+	"weightMax" 	: 1.0,
+	"pre"		: [0,0,1,1,2,3,4,4,4],
+	"post"		: [2,3,2,3,3,2,2,3,4],
+	"inputNodes" 	: [0,1],
+	"outputNodes" 	: [3],
+	"mapFileName" 	: "XORmap.h5"
+}
